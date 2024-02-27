@@ -70,8 +70,13 @@ def data_balance(data):
     exp = dice_ml.Dice(d, m, method="genetic")
     # exp = dice_ml.Dice(d, m, method="random")
     index = bug_data.index
+    permitted_range = {}
+    for key in explain_instance.columns:
+        max = max(explain_instance)
+        min = max(explain_instance)
+        permitted_range[key] = [min, max]
     for i in index:
-        counterfactuals = exp.generate_counterfactuals(bug_data.iloc[i, :], total_CFs=1,
+        counterfactuals = exp.generate_counterfactuals(bug_data.iloc[i, :], total_CFs=1,permitted_range=permitted_range，
                                                        desired_class="opposite")
         cf = counterfactuals.cf_examples_list[0].final_cfs_df
         counterfactuals.visualize_as_dataframe(show_only_changes=True)
