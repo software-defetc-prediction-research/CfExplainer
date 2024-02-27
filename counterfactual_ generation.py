@@ -140,9 +140,14 @@ def generate_instance_counterfactual(X_train,X_explain, y_explain,indep,dep,blac
             m = dice_ml.Model(model=pretain_model, backend="sklearn")
             exp = dice_ml.Dice(d, m, method="random")
             synthetic_instance = pd.DataFrame()
+            permitted_range = {}
+            for key in explain_instance.columns:
+                max = max(explain_instance)
+                min = max(explain_instance)
+                permitted_range[key] = [min, max]
             # Generating instances using the counterfactual
             for i in X_train.index:
-                counterfactuals = exp.generate_counterfactuals(X_train.iloc[i:i + 1, :], total_CFs=1,desired_class="opposite")
+                counterfactuals = exp.generate_counterfactuals(X_train.iloc[i:i + 1, :], total_CFs=50,permitted_range=permitted_range,desired_class="opposite")
                 cf = counterfactuals.cf_examples_list[0].final_cfs_df
                 counterfactuals.visualize_as_dataframe(show_only_changes=True)
                 synthetic_instance = synthetic_instance.append(cf, ignore_index=True) 
